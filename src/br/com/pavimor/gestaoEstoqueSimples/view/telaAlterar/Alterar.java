@@ -23,7 +23,7 @@ public class Alterar {
 		frame.setLayout(new BorderLayout());
 
 		JPanel pNorte = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
-		JLabel dica = new JLabel("Bem-vindo(a) ao gerenciador de estoque Pavimor!");
+		JLabel dica = new JLabel("<html>Bem-vindo(a) ao gerenciador de estoque <b>Pavimor</b>!</html>");
 		dica.setFont(new Font("Arial", Font.PLAIN, 14));
 		dica.setPreferredSize(new Dimension(350, 25));
 

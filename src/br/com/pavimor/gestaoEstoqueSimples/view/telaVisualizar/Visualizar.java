@@ -14,7 +14,7 @@ import br.com.pavimor.gestaoEstoqueSimples.view.telaPrincipal.Tela;
 
 public class Visualizar {
 
-	public static void visualizarProdutos() {
+	public void visualizarProdutos() {
 
 		JFrame frame = new JFrame("Gestão de Estoque Pavimor - Visualizar Produtos");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -23,7 +23,7 @@ public class Visualizar {
 		frame.setLayout(new BorderLayout());
 
 		JPanel pNorte = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
-		JLabel dica = new JLabel("Bem-vindo(a) ao gerenciador de estoque Pavimor!");
+		JLabel dica = new JLabel("<html>Bem-vindo(a) ao gerenciador de estoque <b>Pavimor</b>!</html>");
 		dica.setFont(new Font("Arial", Font.PLAIN, 14));
 		dica.setPreferredSize(new Dimension(350, 25));
 
