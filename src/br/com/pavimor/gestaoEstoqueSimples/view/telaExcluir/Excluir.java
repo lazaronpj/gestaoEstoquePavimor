@@ -18,6 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import br.com.pavimor.gestaoEstoqueSimples.dao.DaoProdutos;
 import br.com.pavimor.gestaoEstoqueSimples.view.telaPrincipal.Tela;
 
 public class Excluir {
@@ -32,9 +33,9 @@ public class Excluir {
 		frame.setLayout(new BorderLayout());
 
 		JPanel pNorte = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
-		JLabel dica = new JLabel("<html>Digite o <b>id</b> do produto que você deseja <b>excluir</b>!</html>");
+		JLabel dica = new JLabel("<html>Digite o <b>id</b> do produto que você deseja <b>excluir</b> do estoque!</html>");
 		dica.setFont(new Font("Arial", Font.PLAIN, 14));
-		dica.setPreferredSize(new Dimension(350, 25));
+		dica.setPreferredSize(new Dimension(400, 25));
 
 		pNorte.add(dica);
 
@@ -65,12 +66,24 @@ public class Excluir {
 			public void actionPerformed(ActionEvent e) {
 
 				try {
-					int id = Integer.parseInt(campoId.getText().trim());
-
 					int confirmacao = JOptionPane.showConfirmDialog(frame, "Deseja realmente excluir esse item?", "Confirmação", JOptionPane.YES_NO_OPTION);
 
 					if (confirmacao == JOptionPane.YES_OPTION) {
-						// bd
+						try {
+							int id = Integer.parseInt(campoId.getText());
+
+							DaoProdutos dao = new DaoProdutos();
+							if (dao.remover(id)) {
+								JOptionPane.showMessageDialog(null, "✅ Produto removido!");
+							} else {
+								JOptionPane.showMessageDialog(null, "⚠ Produto não encontrado para remoção.");
+							}
+						} catch (NumberFormatException ex) {
+							JOptionPane.showMessageDialog(null, "ID inválido, digite um número inteiro.");
+						} catch (Exception ex) {
+							JOptionPane.showMessageDialog(null, "Erro inesperado: " + ex.getMessage());
+							ex.printStackTrace();
+						}
 					} else {
 						frame.dispose();
 					}
@@ -104,7 +117,7 @@ public class Excluir {
 
 		frame.add(pNorte, BorderLayout.NORTH);
 		frame.add(pCentro, BorderLayout.CENTER);
-		frame.add(pSul, BorderLayout.SOUTH);
+		frame.add(pSul, BorderLayout.PAGE_END);
 
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);

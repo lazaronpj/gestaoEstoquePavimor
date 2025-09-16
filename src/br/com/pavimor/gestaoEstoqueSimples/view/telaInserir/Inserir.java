@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.time.LocalDateTime;
+import java.util.Locale;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -15,9 +17,12 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import br.com.pavimor.gestaoEstoqueSimples.dao.DaoProdutos;
+import br.com.pavimor.gestaoEstoqueSimples.model.Produto;
 import br.com.pavimor.gestaoEstoqueSimples.view.telaPrincipal.Tela;
 
 /**
@@ -56,7 +61,7 @@ public class Inserir {
 		pCentro.setLayout(new BoxLayout(pCentro, BoxLayout.Y_AXIS));
 
 		campoNome = new JTextField();
-		comboUnidade = new JComboBox<>(new String[]{"Unidade", "Metro Quadrado (m²)", "Saco (sc)", "Metro Cúbico (m³)", "Litro (L)"});
+		comboUnidade = new JComboBox<>(new String[]{"Selecione uma opção", "Unidade", "Metro Quadrado (m²)", "Saco (sc)", "Metro Cúbico (m³)", "Litro (L)"});
 		campoQuantidade = new JTextField();
 		campoCustoUnitario = new JTextField();
 
@@ -79,15 +84,25 @@ public class Inserir {
 		});
 
 		campos.add(Box.createVerticalStrut(5));
-		campos.add(criarLinha("Custo unitário em R$:", campoCustoUnitario));
+		campos.add(criarLinha("<html>Custo unitário em <b>R$</b>:</html>:", campoCustoUnitario));
 
 		campoCustoUnitario.addKeyListener(new KeyAdapter() {
-
 			public void keyReleased(KeyEvent e) {
-				String txt = campoCustoUnitario.getText().trim();
+				String numeros = campoCustoUnitario.getText().replaceAll("\\D", "");
 
-				txt = txt.replaceAll("[^0-9.]", "");
-				campoCustoUnitario.setText(txt);
+				if (numeros.isEmpty()) {
+					campoCustoUnitario.setText("0.00");
+					return;
+				}
+
+				try {
+					double valor = Double.parseDouble(numeros) / 100;
+					String valorFormatado = String.format(Locale.US, "%.2f", valor);
+					campoCustoUnitario.setText(valorFormatado);
+
+				} catch (NumberFormatException en) {
+					JOptionPane.showMessageDialog(frame, "O campo Custo Unitário devem conter apenas números válidos!", "Erro", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 
@@ -98,9 +113,28 @@ public class Inserir {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				try {
+					Produto p = new Produto();
+					p.setNomeProduto(campoNome.getText());
+					p.setUnidade((String) comboUnidade.getSelectedItem());
+					p.setQuantidade(Integer.parseInt(campoQuantidade.getText()));
+					p.setCustoUnitario(Double.parseDouble(campoCustoUnitario.getText()));
 
-				// bd
+					p.setDataEntrada(LocalDateTime.now());
+					p.setDataSaida(null);
 
+					DaoProdutos dao = new DaoProdutos();
+					if (dao.inserir(p)) {
+						JOptionPane.showMessageDialog(null, "✅ Produto cadastrado com sucesso!");
+					} else {
+						JOptionPane.showMessageDialog(null, "⚠ Erro ao cadastrar produto.");
+					}
+				} catch (NumberFormatException ex) {
+					JOptionPane.showMessageDialog(null, "Quantidade ou Custo inválidos. Digite números válidos.");
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(null, "Erro inesperado: " + ex.getMessage());
+					ex.printStackTrace();
+				}
 			}
 		});
 
@@ -128,7 +162,7 @@ public class Inserir {
 
 		frame.add(pNorte, BorderLayout.NORTH);
 		frame.add(pCentro, BorderLayout.CENTER);
-		frame.add(pSul, BorderLayout.SOUTH);
+		frame.add(pSul, BorderLayout.PAGE_END);
 
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);

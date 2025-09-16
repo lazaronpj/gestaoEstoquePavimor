@@ -1,0 +1,12 @@
+CREATE DATABASE gestaoEstoquePavimor;
+USE gestaoEstoquePavimor;
+
+CREATE TABLE produtos (
+idProduto INT PRIMARY KEY AUTO_INCREMENT,
+nomeProduto VARCHAR(50) NOT NULL,
+unidade VARCHAR(50),
+quantidade INT NOT NULL,
+custoUnitario DECIMAL(10,2) NOT NULL,
+dataEntrada DATETIME DEFAULT CURRENT_TIMESTAMP,
+dataSaida DATETIME DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
+);

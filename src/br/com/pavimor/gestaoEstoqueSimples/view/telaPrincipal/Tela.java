@@ -115,7 +115,7 @@ public class Tela {
 
 		frame.add(pNorte, BorderLayout.NORTH);
 		frame.add(pCentro, BorderLayout.CENTER);
-		frame.add(pSul, BorderLayout.SOUTH);
+		frame.add(pSul, BorderLayout.PAGE_END);
 
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);

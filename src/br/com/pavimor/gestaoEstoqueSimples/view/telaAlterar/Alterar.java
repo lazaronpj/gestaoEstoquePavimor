@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.time.LocalDateTime;
+import java.util.Locale;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -19,6 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import br.com.pavimor.gestaoEstoqueSimples.dao.DaoProdutos;
 import br.com.pavimor.gestaoEstoqueSimples.model.Produto;
 import br.com.pavimor.gestaoEstoqueSimples.view.telaPrincipal.Tela;
 
@@ -67,13 +70,26 @@ public class Alterar {
 		JButton enviar = new JButton("Enviar");
 		enviar.setFont(new Font("Arial", Font.BOLD, 14));
 		enviar.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// bd
-				//
-				// mostrarFormularioAlteracao();
+				try {
+					int id = Integer.parseInt(campoId.getText().trim());
 
+					DaoProdutos dao = new DaoProdutos();
+					Produto produto = dao.buscarPorId(id);
+					if (produto != null) {
+						mostrarFormularioAlteracao(produto);
+						frame.dispose();
+					} else {
+						JOptionPane.showMessageDialog(frame, "⚠ Produto não encontrado!", "Aviso", JOptionPane.WARNING_MESSAGE);
+					}
+
+				} catch (NumberFormatException ex) {
+					JOptionPane.showMessageDialog(frame, "Digite um ID válido (somente números).", "Erro", JOptionPane.ERROR_MESSAGE);
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(frame, "Erro inesperado: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+					ex.printStackTrace();
+				}
 			}
 		});
 
@@ -116,17 +132,23 @@ public class Alterar {
 	}
 
 	public void mostrarFormularioAlteracao(Produto pdt) {
-		JFrame frameAlt = new JFrame("");
+		JFrame frameAlt = new JFrame("Alterando Dados de Produtos");
 		frameAlt.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frameAlt.setSize(600, 350);
 		frameAlt.setResizable(false);
 		frameAlt.setLayout(new BorderLayout());
 
+		JPanel pNorte = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+		JLabel dica1 = new JLabel("<html>Digite corretamente os <b>dados</b> do produto que você deseja <b>alterar</b>!</html>");
+		dica1.setFont(new Font("Arial", Font.PLAIN, 14));
+		dica1.setPreferredSize(new Dimension(450, 25));
+		pNorte.add(dica1);
+
 		JPanel pCentro = new JPanel();
 		pCentro.setLayout(new BoxLayout(pCentro, BoxLayout.Y_AXIS));
 
 		campoNome = new JTextField();
-		comboUnidade = new JComboBox<>(new String[]{"Unidade", "Metro Quadrado (m²)", "Saco (sc)", "Metro Cúbico (m³)", "Litro (L)"});
+		comboUnidade = new JComboBox<>(new String[]{"Selecione uma opção", "Unidade", "Metro Quadrado (m²)", "Saco (sc)", "Metro Cúbico (m³)", "Litro (L)"});
 		campoQuantidade = new JTextField();
 		campoCustoUnitario = new JTextField();
 
@@ -149,15 +171,25 @@ public class Alterar {
 		});
 
 		campos.add(Box.createVerticalStrut(5));
-		campos.add(criarLinha("Custo unitário em R$:", campoCustoUnitario));
+		campos.add(criarLinha("<html>Custo unitário em <b>R$</b>:</html>", campoCustoUnitario));
 
 		campoCustoUnitario.addKeyListener(new KeyAdapter() {
-
 			public void keyReleased(KeyEvent e) {
-				String txt = campoCustoUnitario.getText().trim();
+				String numeros = campoCustoUnitario.getText().replaceAll("\\D", "");
 
-				txt = txt.replaceAll("[^0-9.]", "");
-				campoCustoUnitario.setText(txt);
+				if (numeros.isEmpty()) {
+					campoCustoUnitario.setText("0.00");
+					return;
+				}
+
+				try {
+					double valor = Double.parseDouble(numeros) / 100;
+					String valorFormatado = String.format(Locale.US, "%.2f", valor);
+					campoCustoUnitario.setText(valorFormatado);
+
+				} catch (NumberFormatException en) {
+					JOptionPane.showMessageDialog(null, "O campo Custo Unitário devem conter apenas números válidos!", "Erro", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 
@@ -165,29 +197,37 @@ public class Alterar {
 		JButton enviar = new JButton("Enviar");
 		enviar.setFont(new Font("Arial", Font.BOLD, 14));
 		enviar.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					String nome = campoNome.getText().trim();
-					String unidade = (String) comboUnidade.getSelectedItem();
-					int qtd = Integer.parseInt(campoQuantidade.getText().trim());
-					double custoUnitario = Double.parseDouble(campoCustoUnitario.getText().trim());
+					Produto p = new Produto();
+					p.setIdProduto(Integer.parseInt(campoId.getText()));
+					p.setNomeProduto(campoNome.getText().trim());
+					p.setUnidade((String) comboUnidade.getSelectedItem());
+					p.setQuantidade(Integer.parseInt(campoQuantidade.getText().trim()));
+					p.setCustoUnitario(Double.parseDouble(campoCustoUnitario.getText().trim()));
 
-					int confirmacao = JOptionPane.showConfirmDialog(frameAlt, "Deseja realmente alterar esse item?", "Confirmação", JOptionPane.YES_NO_OPTION);
+					p.setDataEntrada(LocalDateTime.now());
+					p.setDataSaida(null);
+
+					int confirmacao = JOptionPane.showConfirmDialog(null, "Deseja realmente alterar esse produto?", "Confirmação", JOptionPane.YES_NO_OPTION);
 
 					if (confirmacao == JOptionPane.YES_OPTION) {
-						// bd
-					} else {
-						frameAlt.dispose();
+						DaoProdutos dao = new DaoProdutos();
+						if (dao.atualizar(p)) {
+							JOptionPane.showMessageDialog(null, "✅ Produto atualizado com sucesso!");
+						} else {
+							JOptionPane.showMessageDialog(null, "⚠ Nenhum produto encontrado para atualizar.");
+						}
 					}
 
 				} catch (NumberFormatException ex) {
-
-					JOptionPane.showMessageDialog(frameAlt, "Os campos 'Unidade, Quantidade, Custo Unitário' devem possuir um número válido!", "Erro", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Os campos Quantidade e Custo Unitário devem ser numéricos válidos.", "Erro", JOptionPane.ERROR_MESSAGE);
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(null, "Erro inesperado: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+					ex.printStackTrace();
 				}
 			}
-
 		});
 
 		JButton limparCampos = new JButton("Limpar Campos");
@@ -212,8 +252,9 @@ public class Alterar {
 		JPanel pSul = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
 		pSul.add(Tela.criarCopyright());
 
+		frameAlt.add(pNorte, BorderLayout.PAGE_START);
 		frameAlt.add(pCentro, BorderLayout.CENTER);
-		frameAlt.add(pSul, BorderLayout.SOUTH);
+		frameAlt.add(pSul, BorderLayout.PAGE_END);
 
 		frameAlt.setLocationRelativeTo(null);
 		frameAlt.setVisible(true);
