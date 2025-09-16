@@ -6,6 +6,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -45,7 +47,7 @@ public class Inserir {
 		frame.setLayout(new BorderLayout());
 
 		JPanel pNorte = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
-		JLabel dica = new JLabel("<html>Bem-vindo(a) ao gerenciador de estoque <b>Pavimor</b>!</html>");
+		JLabel dica = new JLabel("<html>Digite os dados do produto que você deseja <b>inserir</b>!</html>");
 		dica.setFont(new Font("Arial", Font.PLAIN, 14));
 		dica.setPreferredSize(new Dimension(350, 25));
 		pNorte.add(dica);
@@ -65,8 +67,29 @@ public class Inserir {
 		campos.add(criarLinha("Unidade de medida:", comboUnidade));
 		campos.add(Box.createVerticalStrut(5));
 		campos.add(criarLinha("Quantidade:", campoQuantidade));
+
+		campoQuantidade.addKeyListener(new KeyAdapter() {
+
+			public void keyReleased(KeyEvent e) {
+				String txt = campoQuantidade.getText().trim();
+
+				txt = txt.replaceAll("[^0-9]", "");
+				campoQuantidade.setText(txt);
+			}
+		});
+
 		campos.add(Box.createVerticalStrut(5));
 		campos.add(criarLinha("Custo unitário em R$:", campoCustoUnitario));
+
+		campoCustoUnitario.addKeyListener(new KeyAdapter() {
+
+			public void keyReleased(KeyEvent e) {
+				String txt = campoCustoUnitario.getText().trim();
+
+				txt = txt.replaceAll("[^0-9.]", "");
+				campoCustoUnitario.setText(txt);
+			}
+		});
 
 		JPanel botoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
 		JButton enviar = new JButton("Enviar");
@@ -75,6 +98,7 @@ public class Inserir {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+
 				// bd
 
 			}

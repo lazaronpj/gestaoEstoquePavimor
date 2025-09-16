@@ -18,14 +18,14 @@ public class Visualizar {
 
 		JFrame frame = new JFrame("Gestão de Estoque Pavimor - Visualizar Produtos");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.setSize(800, 180);
+		frame.setSize(800, 400);
 		frame.setResizable(false);
 		frame.setLayout(new BorderLayout());
 
 		JPanel pNorte = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
-		JLabel dica = new JLabel("<html>Bem-vindo(a) ao gerenciador de estoque <b>Pavimor</b>!</html>");
+		JLabel dica = new JLabel("<html>Visualize abaixo os dados contidos no <b>banco de dados</b>!</html>");
 		dica.setFont(new Font("Arial", Font.PLAIN, 14));
-		dica.setPreferredSize(new Dimension(350, 25));
+		dica.setPreferredSize(new Dimension(400, 25));
 
 		pNorte.add(dica);
 
@@ -42,4 +42,5 @@ public class Visualizar {
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 	}
+
 }

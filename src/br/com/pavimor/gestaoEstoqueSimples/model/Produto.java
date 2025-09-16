@@ -1,13 +1,13 @@
 package br.com.pavimor.gestaoEstoqueSimples.model;
 
-public class Produtos {
+public class Produto {
 
 	private String nomeProduto;
 	private String unidade;
 	private int quantidade;
 	private double custoUnitario;
 
-	public Produtos(String nomeProduto, String unidade, int quantidade, double custoUnitario) {
+	public Produto(String nomeProduto, String unidade, int quantidade, double custoUnitario) {
 		this.nomeProduto = nomeProduto;
 		this.unidade = unidade;
 		this.quantidade = quantidade;
