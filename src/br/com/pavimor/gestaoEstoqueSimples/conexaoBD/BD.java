@@ -7,19 +7,18 @@ import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 public class BD {
-
-	private final String URL = "jdbc:mysql://localhost:3306/gestaoEstoquePavimor";
-	private final String USER = "root";
-	private final String PASSWORD = "1212";
+	private static final String URL = "jdbc:mysql://localhost:3306/gestaoEstoquePavimor";
+	private static final String USER = "root";
+	private static final String PASSWORD = "1212";
 
 	public Connection conectarBD() throws SQLException {
 		try {
 			return DriverManager.getConnection(URL, USER, PASSWORD);
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, "Falha na conexão com o banco:\n" + e.getMessage(), "Erro de Conexão", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "<html><font color = 'RED'>Falha na conexão com o banco de dados!</font></html>" + e.getMessage(), "Erro de Conexão", JOptionPane.ERROR_MESSAGE);
+
+			System.out.println("Erro ao conectar no banco: " + e.getMessage());
 			throw e;
 		}
-
 	}
-
 }

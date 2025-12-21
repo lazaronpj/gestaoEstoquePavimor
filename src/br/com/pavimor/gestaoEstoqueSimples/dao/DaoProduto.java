@@ -13,24 +13,22 @@ import javax.swing.JOptionPane;
 import br.com.pavimor.gestaoEstoqueSimples.conexaoBD.BD;
 import br.com.pavimor.gestaoEstoqueSimples.model.Produto;
 
-public class DaoProdutos {
+public class DaoProduto {
 
 	public boolean inserir(Produto pdt) {
-		String sql = "INSERT INTO produtos (nomeProduto, unidade, quantidade, custoUnitario, dataEntrada, dataSaida) VALUES (?, ?, ?, ?, ?, ?)";
-
+		String sql = "INSERT INTO produtos (nomeProduto, unidade, localizacao, quantidade, custoUnitario, dataEntrada) VALUES (?, ?, ?, ?, ?, NOW())";
 		try (Connection conexao = new BD().conectarBD(); PreparedStatement stmt = conexao.prepareStatement(sql)) {
 
 			stmt.setString(1, pdt.getNomeProduto());
 			stmt.setString(2, pdt.getUnidade());
-			stmt.setInt(3, pdt.getQuantidade());
-			stmt.setDouble(4, pdt.getCustoUnitario());
-
-			stmt.setTimestamp(5, pdt.getDataEntrada() != null ? Timestamp.valueOf(pdt.getDataEntrada()) : null);
-			stmt.setTimestamp(6, pdt.getDataSaida() != null ? Timestamp.valueOf(pdt.getDataSaida()) : null);
+			stmt.setString(3, pdt.getLocalizacao());
+			stmt.setInt(4, pdt.getQuantidade());
+			stmt.setDouble(5, pdt.getCustoUnitario());
 
 			return stmt.executeUpdate() > 0;
-		} catch (SQLException ex) {
-			ex.printStackTrace();
+		} catch (SQLException e) {
+			alertaErro("Erro ao inserir produtos no banco de dados!");
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -46,6 +44,7 @@ public class DaoProdutos {
 				pd.setIdProduto(rs.getInt("idProduto"));
 				pd.setNomeProduto(rs.getString("nomeProduto"));
 				pd.setUnidade(rs.getString("unidade"));
+				pd.setLocalizacao(rs.getString("localizacao"));
 				pd.setQuantidade(rs.getInt("quantidade"));
 				pd.setCustoUnitario(rs.getDouble("custoUnitario"));
 
@@ -56,31 +55,32 @@ public class DaoProdutos {
 
 				produtos.add(pd);
 			}
-		} catch (SQLException ex) {
-			ex.printStackTrace();
+		} catch (SQLException e) {
+			alertaErro("Erro ao listar produtos no banco de dados!");
+			e.printStackTrace();
 		}
 		return produtos;
 	}
 
 	public boolean atualizar(Produto pdt) {
-		String sql = "UPDATE produtos SET nomeProduto = ?, unidade = ?, quantidade = ?, custoUnitario = ?, dataEntrada = ?, dataSaida = ? WHERE idProduto = ?";
-
+		String sql = "UPDATE produtos SET nomeProduto = ?, unidade = ?, localizacao = ?, quantidade = ?, custoUnitario = ? WHERE idProduto = ?";
 		try (Connection conexao = new BD().conectarBD(); PreparedStatement stmt = conexao.prepareStatement(sql)) {
 
 			stmt.setString(1, pdt.getNomeProduto());
 			stmt.setString(2, pdt.getUnidade());
-			stmt.setInt(3, pdt.getQuantidade());
-			stmt.setDouble(4, pdt.getCustoUnitario());
-			stmt.setTimestamp(5, pdt.getDataEntrada() != null ? Timestamp.valueOf(pdt.getDataEntrada()) : null);
-			stmt.setTimestamp(6, pdt.getDataSaida() != null ? Timestamp.valueOf(pdt.getDataSaida()) : null);
-			stmt.setInt(7, pdt.getIdProduto());
+			stmt.setString(3, pdt.getLocalizacao());
+			stmt.setInt(4, pdt.getQuantidade());
+			stmt.setDouble(5, pdt.getCustoUnitario());
+			stmt.setInt(6, pdt.getIdProduto());
 
 			return stmt.executeUpdate() > 0;
-		} catch (SQLException ex) {
-			ex.printStackTrace();
+		} catch (SQLException e) {
+			alertaErro("Erro ao atualizar o produto no banco de dados: ");
+			e.printStackTrace();
 			return false;
 		}
 	}
+
 	public Produto buscarPorId(int idProduto) {
 		String sql = "SELECT * FROM produtos WHERE idProduto = ?";
 		Produto produto = null;
@@ -93,43 +93,57 @@ public class DaoProdutos {
 			if (rs.next()) {
 				produto = new Produto();
 				produto.setIdProduto(rs.getInt("idProduto"));
-			}
+				produto.setNomeProduto(rs.getString("nomeProduto"));
+				produto.setLocalizacao(rs.getString("localizacao"));
+				produto.setUnidade(rs.getString("unidade"));
+				produto.setQuantidade(rs.getInt("quantidade"));
+				produto.setCustoUnitario(rs.getDouble("custoUnitario"));
 
+				Timestamp entrada = rs.getTimestamp("dataEntrada");
+				Timestamp saida = rs.getTimestamp("dataSaida");
+				produto.setDataEntrada(entrada != null ? entrada.toLocalDateTime() : null);
+				produto.setDataSaida(saida != null ? saida.toLocalDateTime() : null);
+			}
 		} catch (SQLException e) {
+			alertaErro("Erro ao buscar ID no banco de dados: ");
 			e.printStackTrace();
 		}
-
 		return produto;
 	}
 
-	public void registrarSaida(int idProduto) {
-		String sql = "UPDATE produtos SET dataSaida = NOW() WHERE idProduto = ?";
-		try (Connection conexao = new BD().conectarBD(); PreparedStatement stmt = conexao.prepareStatement(sql)) {
+	public boolean registrarSaida(int idProduto, int quantidade) {
+		String sqlUpdate = "UPDATE produtos SET quantidade = quantidade - ?, dataSaida = NOW() WHERE idProduto = ?";
 
-			stmt.setInt(1, idProduto);
-			int rows = stmt.executeUpdate();
+		try (Connection conexao = new BD().conectarBD(); PreparedStatement stmtUpdate = conexao.prepareStatement(sqlUpdate)) {
 
-			if (rows > 0) {
-				JOptionPane.showMessageDialog(null, "Data de saída registrada com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-			} else {
-				JOptionPane.showMessageDialog(null, "Produto não encontrado", "Erro", JOptionPane.ERROR_MESSAGE);
-			}
+			stmtUpdate.setInt(1, quantidade);
+			stmtUpdate.setInt(2, idProduto);
+			int rows = stmtUpdate.executeUpdate();
+
+			return rows > 0;
 
 		} catch (SQLException e) {
+			alertaErro("Erro ao registrar saída no banco de dados!");
 			e.printStackTrace();
+			return false;
 		}
 	}
 
 	public boolean remover(int idProduto) {
 		String sql = "DELETE FROM produtos WHERE idProduto = ?";
-
 		try (Connection conexao = new BD().conectarBD(); PreparedStatement stmt = conexao.prepareStatement(sql)) {
 
 			stmt.setInt(1, idProduto);
 			return stmt.executeUpdate() > 0;
-		} catch (SQLException ex) {
-			ex.printStackTrace();
+		} catch (SQLException e) {
+			alertaErro("Erro ao remover produto do banco de dados!");
+			e.printStackTrace();
 			return false;
 		}
 	}
+
+	private void alertaErro(String msg) {
+		JOptionPane.showMessageDialog(null, "<html>❌ <b><font color='red'>Erro:</font></b> " + msg + "</html>", "Erro", JOptionPane.ERROR_MESSAGE);
+	}
+
 }

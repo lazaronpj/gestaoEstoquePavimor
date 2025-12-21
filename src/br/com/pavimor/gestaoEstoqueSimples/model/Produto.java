@@ -3,23 +3,26 @@ package br.com.pavimor.gestaoEstoqueSimples.model;
 import java.time.LocalDateTime;
 
 public class Produto {
-
 	private int idProduto;
 	private String nomeProduto;
 	private String unidade;
+	private String localizacao;
 	private int quantidade;
 	private double custoUnitario;
 	private LocalDateTime dataEntrada;
 	private LocalDateTime dataSaida;
+	private Integer quantidadeMinima;
 
-	public Produto(int idProduto, String nomeProduto, String unidade, int quantidade, double custoUnitario, LocalDateTime dataEntrada, LocalDateTime dataSaida) {
+	public Produto(int idProduto, String nomeProduto, String unidade, String localizacao, int quantidade, double custoUnitario, LocalDateTime dataEntrada, LocalDateTime dataSaida, Integer quantidadeMinima) {
 		this.idProduto = idProduto;
 		this.nomeProduto = nomeProduto;
 		this.unidade = unidade;
+		this.localizacao = localizacao;
 		this.quantidade = quantidade;
 		this.custoUnitario = custoUnitario;
 		this.dataEntrada = dataEntrada;
 		this.dataSaida = dataSaida;
+		this.quantidadeMinima = quantidadeMinima;
 	}
 
 	public Produto() {
@@ -47,6 +50,14 @@ public class Produto {
 
 	public void setUnidade(String unidade) {
 		this.unidade = unidade;
+	}
+
+	public String getLocalizacao() {
+		return localizacao;
+	}
+
+	public void setLocalizacao(String localizacao) {
+		this.localizacao = localizacao;
 	}
 
 	public int getQuantidade() {
@@ -79,5 +90,13 @@ public class Produto {
 
 	public void setDataSaida(LocalDateTime dataSaida) {
 		this.dataSaida = dataSaida;
+	}
+
+	public Integer getQuantidadeMinima() {
+		return quantidadeMinima;
+	}
+
+	public void setQuantidadeMinima(Integer quantidadeMinima) {
+		this.quantidadeMinima = quantidadeMinima;
 	}
 }

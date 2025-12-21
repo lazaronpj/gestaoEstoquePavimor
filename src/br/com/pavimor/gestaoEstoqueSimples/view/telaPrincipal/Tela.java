@@ -1,127 +1,114 @@
 package br.com.pavimor.gestaoEstoqueSimples.view.telaPrincipal;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import br.com.pavimor.gestaoEstoqueSimples.view.telaAlterar.Alterar;
-import br.com.pavimor.gestaoEstoqueSimples.view.telaExcluir.Excluir;
-import br.com.pavimor.gestaoEstoqueSimples.view.telaInserir.Inserir;
-import br.com.pavimor.gestaoEstoqueSimples.view.telaVisualizar.Visualizar;
-
-/**
- * Essa classe é responsável pela interface gráfica principal do programa
- * 
- * @author Lazaro Nogueira
- * @version 1.0
- * @since 2025-09-16
- */
+import br.com.pavimor.gestaoEstoqueSimples.view.telaAlterar.TelaAlterarProdutos;
+import br.com.pavimor.gestaoEstoqueSimples.view.telaExcluir.TelaExcluirProdutos;
+import br.com.pavimor.gestaoEstoqueSimples.view.telaInserir.TelaCadastroProduto;
+import br.com.pavimor.gestaoEstoqueSimples.view.telaRegistrarSaida.TelaRegistrarSaida;
+import br.com.pavimor.gestaoEstoqueSimples.view.telaVisualizar.TelaVisualizarProdutos;
 
 public class Tela {
 
-	/**
-	 * Esse método cria um JLabel
-	 * 
-	 * @return Retorna uma nova JLabel com a variável texto
-	 * 
-	 */
-	public static final JLabel criarCopyright() {
-		String texto = "<html><div style='text-align:center; color:#808080; font-family: Arial, sans-serif;'>" + "© 2025 Lazaro Coder <span style='color:#C0C0C0;'>v1.0</span>" + "</div></html>";
-		return new JLabel(texto);
-
-	}
-
-	/**
-	 * Método responsável por criar uma tela em Java Swing
-	 * 
-	 */
-	public static void abrirTela() {
+	public Tela() {
 		JFrame frame = new JFrame("Gestão de Estoque Pavimor");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(800, 170);
+		frame.setSize(650, 150);
 		frame.setResizable(false);
 		frame.setLayout(new BorderLayout());
 
-		JPanel pNorte = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+		JPanel pNorte = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		JLabel dica = new JLabel("<html>Bem-vindo(a) ao gerenciador de estoque <b>Pavimor</b>!</html>");
 		dica.setFont(new Font("Arial", Font.PLAIN, 14));
-		dica.setPreferredSize(new Dimension(350, 25));
-
+		dica.setPreferredSize(new Dimension(400, 25));
 		pNorte.add(dica);
 
 		JPanel pCentro = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		JPanel botoes = new JPanel();
+		JButton btnInserir = new JButton("Inserir (I)");
+		btnInserir.setBackground(Color.GREEN);
+		btnInserir.setToolTipText("Inserir novos produtos!");
+		btnInserir.setFont(new Font("Arial", Font.BOLD, 14));
+		JButton btnVisualizar = new JButton("Visualizar (V)");
+		btnVisualizar.setToolTipText("Visualizar produtos!");
+		btnVisualizar.setBackground(Color.BLUE);
+		btnVisualizar.setFont(new Font("Arial", Font.BOLD, 14));
+		JButton btnAlterar = new JButton("Alterar (A)");
+		btnAlterar.setToolTipText("Alterar campos de produtos! (C)");
+		btnAlterar.setBackground(Color.YELLOW);
+		btnAlterar.setFont(new Font("Arial", Font.BOLD, 14));
+		JButton btnExcluir = new JButton("Excluir (E)");
+		btnExcluir.setToolTipText("Excluir produtos!");
+		btnExcluir.setBackground(Color.RED);
+		btnExcluir.setFont(new Font("Arial", Font.BOLD, 14));
+		JButton btnSaida = new JButton("Registrar Saída (R)");
+		btnSaida.setToolTipText("Registrar saída de produtos!");
+		btnSaida.setBackground(Color.ORANGE);
+		btnSaida.setFont(new Font("Arial", Font.BOLD, 14));
 
-		JButton inserir = new JButton("Inserir");
-		inserir.setFont(new Font("Arial", Font.BOLD, 14));
-		inserir.addActionListener(new ActionListener() {
+		btnInserir.addActionListener(e -> new TelaCadastroProduto());
+		btnVisualizar.addActionListener(e -> new TelaVisualizarProdutos());
+		btnAlterar.addActionListener(e -> new TelaAlterarProdutos());
+		btnExcluir.addActionListener(e -> new TelaExcluirProdutos());
+		btnSaida.addActionListener(e -> new TelaRegistrarSaida());
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Inserir ins = new Inserir();
-				ins.inserirProdutos();
+		btnInserir.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				int tecla = e.getKeyCode();
+
+				switch (tecla) {
+					case KeyEvent.VK_I :
+						btnInserir.doClick();
+						break;
+					case KeyEvent.VK_V :
+						btnVisualizar.doClick();
+						break;
+					case KeyEvent.VK_A :
+						btnAlterar.doClick();
+						break;
+					case KeyEvent.VK_E :
+						btnExcluir.doClick();
+						break;
+					case KeyEvent.VK_R :
+						btnSaida.doClick();
+						break;
+				}
 			}
 		});
 
-		JButton visualizar = new JButton("Visualizar");
-		visualizar.setFont(new Font("Arial", Font.BOLD, 14));
-		visualizar.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Visualizar vis = new Visualizar();
-				vis.visualizarProdutos();
-			}
-		});
-
-		JButton alterar = new JButton("Alterar");
-		alterar.setFont(new Font("Arial", Font.BOLD, 14));
-		alterar.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Alterar alt = new Alterar();
-				alt.alterarProdutos();
-			}
-		});
-
-		JButton excluir = new JButton("Excluir");
-		excluir.setFont(new Font("Arial", Font.BOLD, 14));
-		excluir.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Excluir exc = new Excluir();
-				exc.excluirProdutos();
-			}
-		});
-
-		botoes.add(inserir);
-		botoes.add(visualizar);
-		botoes.add(alterar);
-		botoes.add(excluir);
-		pCentro.add(botoes);
+		pCentro.add(btnInserir);
+		pCentro.add(btnVisualizar);
+		pCentro.add(btnAlterar);
+		pCentro.add(btnExcluir);
+		pCentro.add(btnSaida);
 
 		JPanel pSul = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		pSul.add(criarCopyright());
 
 		frame.add(pNorte, BorderLayout.NORTH);
 		frame.add(pCentro, BorderLayout.CENTER);
-		frame.add(pSul, BorderLayout.PAGE_END);
+		frame.add(pSul, BorderLayout.SOUTH);
 
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 	}
-	public static void main(String[] args) {
-		abrirTela();
+
+	public static final JLabel criarCopyright() {
+		String texto = "<html><div style='text-align:center; color:#808080; font-family: Arial, sans-serif;'>© 2025 Lazaro Coder <span style='color:#C0C0C0;'>v1.0</span></div></html>";
+		return new JLabel(texto);
 	}
 
+	public static void main(String[] args) {
+		new Tela();
+	}
 }
