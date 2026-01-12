@@ -25,8 +25,8 @@ import br.com.pavimor.gestaoEstoqueSimples.model.Produto;
 import br.com.pavimor.gestaoEstoqueSimples.util.ValidadorCampoCusto;
 
 /**
- * Essa classe é responsável pela inserção de produtos no banco de dados.
- * Permite inserir nome, quantidade, preço e selecionar unidade de medida.
+ * Essa classe é responsável pela inserção de produtos no banco de dados. Permite inserir nome, quantidade, preço e selecionar unidade de
+ * medida.
  * 
  * @author Lazaro Nogueira
  * @version 1.0
@@ -36,8 +36,7 @@ import br.com.pavimor.gestaoEstoqueSimples.util.ValidadorCampoCusto;
 public class TelaCadastroProduto {
 
 	/**
-	 * Campos para inserção de nome, quantidade, unidade, custo unitário do
-	 * produto
+	 * Campos para inserção de nome, quantidade, unidade, custo unitário do produto
 	 * 
 	 **/
 
@@ -45,8 +44,7 @@ public class TelaCadastroProduto {
 	private JComboBox<String> comboUnidade, comboLocalizacao;
 
 	/**
-	 * Método responsável por criar uma tela em Java Swing para poder inserir
-	 * produtos via Java Swing.
+	 * Método responsável por criar uma tela em Java Swing para poder inserir produtos via Java Swing.
 	 */
 
 	public TelaCadastroProduto() {
@@ -69,10 +67,11 @@ public class TelaCadastroProduto {
 		campoQuantidade.setToolTipText("Digite a quantidade do produto!");
 		campoCustoUnitario = new JTextField();
 		campoCustoUnitario.setToolTipText("Digite o custo unitário do produto em (R$)!");
-		comboUnidade = new JComboBox<>(new String[]{"Selecione uma Unidade de Medida", "Unidade", "Minheiro", "Caixa", "Kg", "Litro", "Metro²", "Saco", "m³", "Litro"});
+		comboUnidade = new JComboBox<>(new String[]{"Selecione uma Unidade de Medida", "Unidade", "Minheiro", "Caixa", "Kg", "Litro",
+				"Metro²", "Saco", "m³", "Litro"});
 		comboUnidade.setToolTipText("Selecione o tipo de unidade do produto a ser inserido.");
-		comboLocalizacao = new JComboBox<>(
-				new String[]{"Selecione uma Localização", "Galpão de materiais", "Galpão de embalagens", "Almoxarifado", "Oficina", "Pátio de pavimentação", "Pátio de vedação", "Pátio de estruturas"});
+		comboLocalizacao = new JComboBox<>(new String[]{"Selecione uma Localização", "Galpão de materiais", "Galpão de embalagens",
+				"Almoxarifado", "Oficina", "Pátio de pavimentação", "Pátio de vedação", "Pátio de estruturas"});
 		comboLocalizacao.setToolTipText("Selecione a localização do produto!");
 
 		final Color corFoco = new Color(245, 255, 245);
@@ -148,7 +147,8 @@ public class TelaCadastroProduto {
 			public void keyReleased(KeyEvent e) {
 				String txt = campoNome.getText();
 				if (txt.length() > 30) {
-					JOptionPane.showMessageDialog(pCentro, "O campo 'nome' não pode exceder 30 caracteres!", "Aviso", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(pCentro, "O campo 'nome' não pode exceder 30 caracteres!", "Aviso",
+							JOptionPane.WARNING_MESSAGE);
 					campoNome.setText("");
 				} else {
 					campoNome.setText(txt);
@@ -162,7 +162,8 @@ public class TelaCadastroProduto {
 				String txt = campoQuantidade.getText().trim().replaceAll("[^0-9]", "");
 
 				if (txt.length() > 20) {
-					JOptionPane.showMessageDialog(pCentro, "O campo 'quantidade' não pode exceder 20 caracteres!", "Aviso", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(pCentro, "O campo 'quantidade' não pode exceder 20 caracteres!", "Aviso",
+							JOptionPane.WARNING_MESSAGE);
 					campoQuantidade.setText("");
 				} else {
 					campoQuantidade.setText(txt);
@@ -173,7 +174,14 @@ public class TelaCadastroProduto {
 		campoCustoUnitario.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
 				try {
-					campoCustoUnitario.setText(ValidadorCampoCusto.formatarMoeda(campoCustoUnitario.getText()));
+					String txt = campoCustoUnitario.getText().trim().replaceAll("[^0-9]", "");
+					if (txt.length() > 20) {
+						JOptionPane.showMessageDialog(pCentro, "O campo 'custo unitário' não pode exceder 20 caracteres!", "Aviso",
+								JOptionPane.WARNING_MESSAGE);
+						campoCustoUnitario.setText("0.00");
+					} else {
+						campoCustoUnitario.setText(ValidadorCampoCusto.formatarMoeda(campoCustoUnitario.getText()));
+					}
 				} catch (Exception ex) {
 					JOptionPane.showMessageDialog(null, "Custo Unitário inválido!", "Erro", JOptionPane.ERROR_MESSAGE);
 					campoCustoUnitario.setText("0.00");
@@ -241,10 +249,8 @@ public class TelaCadastroProduto {
 	/**
 	 * Esse método valida campos
 	 * 
-	 * @return True se o campo não estiver vazio e selecionado a unidade
-	 *         corretamente
-	 * @return False se o campo estiver vazio e não selecionada a unidade de
-	 *         medida, ou se o custo for menor ou igual a 0.0
+	 * @return True se o campo não estiver vazio e selecionado a unidade corretamente
+	 * @return False se o campo estiver vazio e não selecionada a unidade de medida, ou se o custo for menor ou igual a 0.0
 	 */
 	private boolean validarCampos() {
 		Produto p = new Produto();
@@ -333,15 +339,18 @@ public class TelaCadastroProduto {
 	}
 
 	private void alerta(String msg) {
-		JOptionPane.showMessageDialog(null, "<html>⚠️ <b><font color='orange'>Aviso:</font></b> " + msg + "</html>", "Aviso", JOptionPane.WARNING_MESSAGE);
+		JOptionPane.showMessageDialog(null, "<html>⚠️ <b><font color='orange'>Aviso:</font></b> " + msg + "</html>", "Aviso",
+				JOptionPane.WARNING_MESSAGE);
 	}
 
 	private void alertaSucesso(String msg) {
-		JOptionPane.showMessageDialog(null, "<html>✅ <b><font color='green'>Sucesso:</font></b> " + msg + "</html>", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(null, "<html>✅ <b><font color='green'>Sucesso:</font></b> " + msg + "</html>", "Sucesso",
+				JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private void alertaErro(String msg) {
-		JOptionPane.showMessageDialog(null, "<html>❌ <b><font color='red'>Erro:</font></b> " + msg + "</html>", "Erro", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(null, "<html>❌ <b><font color='red'>Erro:</font></b> " + msg + "</html>", "Erro",
+				JOptionPane.ERROR_MESSAGE);
 	}
 
 	/**

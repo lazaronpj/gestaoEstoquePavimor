@@ -80,10 +80,11 @@ public class TelaAlterarProdutos {
 		campoQuantidade.setToolTipText("Digite a nova quantidade do produto a ser alterado!");
 		campoCustoUnitario = new JTextField();
 		campoCustoUnitario.setToolTipText("Digite o novo custo unitário do produto a ser alterado em (R$)!");
-		comboUnidade = new JComboBox<>(new String[]{"Selecione uma Unidade de Medida", "Unidade", "Minheiro", "Caixa", "Kg", "Litro", "Metro²", "Saco", "m³", "Litro"});
+		comboUnidade = new JComboBox<>(new String[]{"Selecione uma Unidade de Medida", "Unidade", "Minheiro", "Caixa", "Kg", "Litro",
+				"Metro²", "Saco", "m³", "Litro"});
 		comboUnidade.setToolTipText("Selecione o tipo de unidade do produto a ser alterado!");
-		comboLocalizacao = new JComboBox<>(
-				new String[]{"Selecione uma Localização", "Galpão de materiais", "Galpão de embalagens", "Almoxarifado", "Oficina", "Pátio de pavimentação", "Pátio de vedação", "Pátio de estruturas"});
+		comboLocalizacao = new JComboBox<>(new String[]{"Selecione uma Localização", "Galpão de materiais", "Galpão de embalagens",
+				"Almoxarifado", "Oficina", "Pátio de pavimentação", "Pátio de vedação", "Pátio de estruturas"});
 		comboLocalizacao.setToolTipText("Selecione o novo valor de localização a ser alterado!");
 
 		campoNome.addKeyListener(new KeyAdapter() {
@@ -117,7 +118,14 @@ public class TelaAlterarProdutos {
 		campoCustoUnitario.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
 				try {
-					campoCustoUnitario.setText(ValidadorCampoCusto.formatarMoeda(campoCustoUnitario.getText()));
+					String txt = campoCustoUnitario.getText().trim().replaceAll("[^0-9]", "");
+					if (txt.length() > 20) {
+						JOptionPane.showMessageDialog(pCentro, "O campo 'custo unitário' não pode exceder 20 caracteres!", "Aviso",
+								JOptionPane.WARNING_MESSAGE);
+						campoCustoUnitario.setText("0.00");
+					} else {
+						campoCustoUnitario.setText(ValidadorCampoCusto.formatarMoeda(campoCustoUnitario.getText()));
+					}
 				} catch (Exception ex) {
 					JOptionPane.showMessageDialog(null, "Custo Unitário inválido!", "Erro", JOptionPane.ERROR_MESSAGE);
 					campoCustoUnitario.setText("0.00");
@@ -278,10 +286,8 @@ public class TelaAlterarProdutos {
 	/**
 	 * Esse método valida campos
 	 * 
-	 * @return True se o campo não estiver vazio e selecionado a unidade
-	 *         corretamente
-	 * @return False se o campo estiver vazio e não selecionada a unidade de
-	 *         medida, ou se o custo for menor ou igual a 0.0
+	 * @return True se o campo não estiver vazio e selecionado a unidade corretamente
+	 * @return False se o campo estiver vazio e não selecionada a unidade de medida, ou se o custo for menor ou igual a 0.0
 	 */
 	private boolean validarCampos() {
 		if (campoNome.getText().trim().isEmpty()) {
@@ -364,8 +370,10 @@ public class TelaAlterarProdutos {
 			int id = Integer.parseInt(campoId.getText());
 			Produto dadosOriginais = dao.buscarPorId(id);
 
-			if (dadosOriginais.getNomeProduto().equals(campoNome.getText()) && dadosOriginais.getUnidade().equals(comboUnidade.getSelectedItem().toString())
-					&& dadosOriginais.getLocalizacao().equals(comboLocalizacao.getSelectedItem().toString()) && dadosOriginais.getQuantidade() == Integer.parseInt(campoQuantidade.getText())
+			if (dadosOriginais.getNomeProduto().equals(campoNome.getText())
+					&& dadosOriginais.getUnidade().equals(comboUnidade.getSelectedItem().toString())
+					&& dadosOriginais.getLocalizacao().equals(comboLocalizacao.getSelectedItem().toString())
+					&& dadosOriginais.getQuantidade() == Integer.parseInt(campoQuantidade.getText())
 					&& dadosOriginais.getCustoUnitario() == Double.parseDouble(campoCustoUnitario.getText())) {
 
 				alerta("Nenhum dado foi alterado. Modifique os campos antes de salvar.");
@@ -405,15 +413,18 @@ public class TelaAlterarProdutos {
 	}
 
 	private void alerta(String msg) {
-		JOptionPane.showMessageDialog(null, "<html>⚠️ <b><font color='orange'>Aviso:</font></b> " + msg + "</html>", "Aviso", JOptionPane.WARNING_MESSAGE);
+		JOptionPane.showMessageDialog(null, "<html>⚠️ <b><font color='orange'>Aviso:</font></b> " + msg + "</html>", "Aviso",
+				JOptionPane.WARNING_MESSAGE);
 	}
 
 	private void alertaSucesso(String msg) {
-		JOptionPane.showMessageDialog(null, "<html>✅ <b><font color='green'>Sucesso:</font></b> " + msg + "</html>", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(null, "<html>✅ <b><font color='green'>Sucesso:</font></b> " + msg + "</html>", "Sucesso",
+				JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private void alertaErro(String msg) {
-		JOptionPane.showMessageDialog(null, "<html>❌ <b><font color='red'>Erro:</font></b> " + msg + "</html>", "Erro", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(null, "<html>❌ <b><font color='red'>Erro:</font></b> " + msg + "</html>", "Erro",
+				JOptionPane.ERROR_MESSAGE);
 	}
 
 	public static final JLabel criarCopyright() {

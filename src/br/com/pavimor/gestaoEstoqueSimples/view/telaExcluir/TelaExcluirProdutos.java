@@ -32,7 +32,8 @@ public class TelaExcluirProdutos {
 		frame.setLayout(new BorderLayout());
 
 		JPanel pNorte = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JLabel dica = new JLabel("<html>Digite o <b><font color = 'red'>ID</font></b> do produto que você deseja <b>excluir</b> do estoque!</html>");
+		JLabel dica = new JLabel(
+				"<html>Digite o <b><font color = 'red'>ID</font></b> do produto que você deseja <b>excluir</b> do estoque!</html>");
 		dica.setFont(new Font("Arial", Font.PLAIN, 14));
 		dica.setPreferredSize(new Dimension(400, 25));
 		pNorte.add(dica);
@@ -117,8 +118,9 @@ public class TelaExcluirProdutos {
 				return;
 			}
 
-			int confirmacao = JOptionPane.showConfirmDialog(null, "Deseja realmente excluir o produto: " + produtoParaExcluir.getNomeProduto() + " (ID: " + id + ")?", "Confirmação de Exclusão",
-					JOptionPane.YES_NO_OPTION);
+			int confirmacao = JOptionPane.showConfirmDialog(null,
+					"Deseja realmente excluir o produto: " + produtoParaExcluir.getNomeProduto() + " (ID: " + id + ")?",
+					"Confirmação de Exclusão", JOptionPane.YES_NO_OPTION);
 
 			if (confirmacao == JOptionPane.YES_OPTION) {
 				boolean removidoComSucesso = dao.remover(id);
@@ -130,6 +132,7 @@ public class TelaExcluirProdutos {
 					alertaErro("Falha ao excluir o produto.");
 				}
 			} else {
+				campoId.setText("");
 				return;
 			}
 
@@ -152,15 +155,18 @@ public class TelaExcluirProdutos {
 	}
 
 	private void alerta(String msg) {
-		JOptionPane.showMessageDialog(null, "<html>⚠️ <b><font color='orange'>Aviso:</font></b> " + msg + "</html>", "Aviso", JOptionPane.WARNING_MESSAGE);
+		JOptionPane.showMessageDialog(null, "<html>⚠️ <b><font color='orange'>Aviso:</font></b> " + msg + "</html>", "Aviso",
+				JOptionPane.WARNING_MESSAGE);
 	}
 
 	private void alertaSucesso(String msg) {
-		JOptionPane.showMessageDialog(null, "<html>✅ <b><font color='green'>Sucesso:</font></b> " + msg + "</html>", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(null, "<html>✅ <b><font color='green'>Sucesso:</font></b> " + msg + "</html>", "Sucesso",
+				JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private void alertaErro(String msg) {
-		JOptionPane.showMessageDialog(null, "<html>❌ <b><font color='red'>Erro:</font></b> " + msg + "</html>", "Erro", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(null, "<html>❌ <b><font color='red'>Erro:</font></b> " + msg + "</html>", "Erro",
+				JOptionPane.ERROR_MESSAGE);
 	}
 
 	public static final JLabel criarCopyright() {
